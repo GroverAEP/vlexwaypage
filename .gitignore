@@ -1,0 +1,37 @@
+# Entorno virtual
+env/
+venv/
+
+# Archivos Python compilados
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Archivos de entorno / configuración
+*.env
+.env
+
+# Archivos de base de datos
+*.sqlite3
+
+# Archivos de logs
+*.log
+
+# Archivos de sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de configuración del IDE
+.vscode/
+.idea/
+
+# Archivos de migraciones (opcionales si los generas automáticamente)
+**/migrations/*.pyc
+**/migrations/__pycache__/
+
+# Archivos estáticos y de medios (opcional si usas almacenamiento externo)
+staticfiles/
+media/
+
+# node_modules (si usas frontend con npm)
+node_modules/
