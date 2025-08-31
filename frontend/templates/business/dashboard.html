@@ -1,0 +1,315 @@
+<!-- {# templates/dashboard_base.html #}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{% block title %}Dashboard{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Pre Órdenes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#f7f3f3',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Navbar -->
+    <!-- <header class="flex items-center justify-between bg-white px-4 py-2 shadow md:hidden">
+        <button id="menuBtn" class="text-2xl">&#9776;</button>
+        <h1 class="text-lg font-semibold">Dashboard</h1>
+    </header> -->
+
+    <!-- Sidebar -->
+    <!-- <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-white shadow transform -translate-x-full md:translate-x-0 transition-transform duration-300 z-50">
+        <div class="p-4 border-b flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
+                <div class="text-sm">
+                    <p class="font-medium">name Business</p>
+                </div>
+            </div> -->
+            <!-- Botón para cerrar el menú en móviles -->
+            <!-- <button id="closeBtn" class="md:hidden text-xl font-bold">&times;</button>
+        </div>
+        <nav class="p-4 text-sm space-y-4">
+            <a href="#" class="block hover:text-blue-500 toggleSidebar">Dashboard</a>
+            <a href="#" class="block hover:text-blue-500 toggleSidebar">Pre órdenes</a>
+            <a href="#" class="block hover:text-blue-500 toggleSidebar">Opciones</a>
+            <a href="#" class="block hover:text-red-500 toggleSidebar">Logout</a>
+        </nav>
+    </aside> -->
+
+      {% include "business/navbar.html" %}    
+    <main class="px-2 py-4 md:ml-64 transition-all duration-300">
+        <!-- Card business -->
+        <div class="bg-primary rounded-2xl border flex  flex-col sm:flex-row justify-between items-center shadow">
+            <div class="space-y-1 text-center sm:text-left">
+                <h2 class="text-xl font-bold">Negocio: <span class="text-gray-700">{{unique_business.name}}</span></h2>
+                <!-- <p class="text-gray-600">Total Órdenes: 152</p>
+                <p class="text-gray-600">En curso: 5</p> -->
+                <p class="text-gray-600">Ganancias este mes: S/ 3,200</p>
+                <p class="text-green-600 font-semibold">Estado: {{unique_business.status}}</p>
+            </div>
+               <!-- <div class="w-24 h-24 bg-gray-300 rounded-full mt-4 sm:mt-0"></div> -->
+        </div>
+
+        <!-- Graficas -->
+        
+        <!-- 📊 Gráfico -->
+        <div class="chart-container w-full h-96 mb-6">
+            <!-- <div class="" > -->
+                <canvas id="earnChartTable"></canvas>
+
+            <!-- </div> -->
+            <!-- <div>
+
+                <canvas id="orderVisual"></canvas>
+
+            </div>
+            <canvas id="customersEntrance"></canvas> -->
+        </div>
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <!-- FeedBack -->
+            <!-- Grid Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div class="bg-white shadow rounded p-4">
+                    <h3 class="text-sm text-gray-500">Órdenes hoy</h3>
+                    <!-- <p class="text-2xl font-bold">{{ request.session.unique_business.orders | length }}</p> -->
+                    <p class="text-2xl font-bold"><span id="orders-count">0</span></p>
+                </div>
+                <div class="bg-white shadow rounded p-4">
+                    <h3 class="text-sm text-gray-500">Ganancias hoy</h3>
+                    <p class="text-2xl font-bold">S/ <span id= "earn-today">0</span> </p>
+                </div>
+                <div class="bg-white shadow rounded p-4">
+                    <h3 class="text-sm text-gray-500">Clientes nuevos</h3>
+                    <p class="text-2xl font-bold">3</p>
+                </div>
+            </div>
+            
+        <div>
+            
+        </div>
+
+        
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+           
+
+           
+        </div>
+
+
+    <!-- 📌 Código para el gráfico -->
+
+    <!--     gRAFICA DE GANANCIAS POR MES     -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+    </main>
+
+
+
+
+
+<script>
+
+// Script para obtener las ganancias generadas en el mes
+const earn_chart_month = document.getElementById('earnChartTable');
+const ctAx = earn_chart_month.getContext('2d');
+
+let eventEarnMonth = null;
+
+const list_week = [
+    "Enero", "Febrero", "Marzo", "Abril",
+    "Mayo", "Junio", "Julio", "Agosto",
+    "Septiembre", "Octubre", "Noviembre", "Diciembre"
+];
+
+function initialEventEarnMonth() {
+        eventEarnMonth = new EventSource(`http://127.0.0.1:8000/api/orders/metrics/stream_earn_month/{{ unique_business.id }}/`
+    );
+    eventEarnMonth.onmessage = function(event) {
+        const data = JSON.parse(event.data); // { "01": 0, "02": 0, ..., "08": 52, ... }
+        const earn_month = Object.values(data); // [0,0,0,0,0,32,20,52,0,0,0,0]
+        
+        console.log("📊 Datos recibidos:", data);
+        console.log(earn_month)
+        new Chart(ctAx, {
+            type: 'bar',
+            data: {
+                labels: list_week,
+                datasets: [{
+                    label: 'Ganancia (USD)',
+                    data: earn_month,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    };
+}
+
+initialEventEarnMonth();
+
+// ✅ Cuando cambias de página o cierras la pestaña
+window.addEventListener("beforeunload", function() {
+    if (eventEarnMonth) {
+        eventEarnMonth.close();
+        console.log("🔌 Stream cerrado");
+    }
+});
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- JS Toggle -->
+<script>
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('menuBtn');
+    const closeSidebarItems = document.querySelectorAll('.close-sidebar');
+    const closeMenuOnClick = document.getElementById('closeMenuOnClick');
+    
+    // Abrir/cerrar menú en celulares
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+        });
+        
+        // Cerrar menú al hacer click en un enlace del sidebar
+        closeSidebarItems.forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth < 768) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            });
+        });
+        
+        // Cerrar menú al dar clic en el título
+        closeMenuOnClick.addEventListener('click', () => {
+            if (window.innerWidth < 768) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+    </script>
+
+
+
+<script>
+    function updateCustomers() {
+        
+        
+    }
+</script>
+
+<script>
+    function updateEarnList(){
+        
+    }
+</script>
+
+<script>
+    // const businessId = "{{request.session.unique_business.id}}";  // Ejemplo: podría ser {{ user.id }}, localStorage, etc.
+    // const businessId = document.getElementById("orders-container").dataset.businessId;
+   const eventOrderStream = new EventSource(`http://127.0.0.1:8000/api/orders/stream/{{ unique_business.id }}/`)
+    
+    eventOrderStream.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        const ordersCountElem = document.getElementById("orders-count");
+        const earnTodayElem =  document.getElementById("earn-today");
+        
+        console.log(data.earn_today)
+
+        console.log(data)
+        if (ordersCountElem) {
+            earnTodayElem.textContent = data.earn_today;
+            ordersCountElem.textContent = data.status_summary.total;
+        }
+    };
+    
+    
+    // eventSource.onmessage = function(event) {
+        //     const data = JSON.parse(event.data);
+        //     console.log("Órdenes actualizadas:", data);
+        //     document.getElementById("orders-container").innerText = JSON.stringify(data, null, 2);
+        // };
+        
+        eventOrderStream.onerror = function() {
+            console.error("Error en la conexión SSE");
+        };
+        </script>
+
+</body>
+</html>
+
+
+
+<script>
+    
+    function updaerBusinessDashboard(params) {
+        
+        
+    }
+
+</script>

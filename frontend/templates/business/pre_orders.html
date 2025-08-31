@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>{% block title %}Ordenes{% endblock %}</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</head>
+<body>
+    
+      {% include "business/navbar.html" %}    
+
+    <!-- Main -->
+    <div class="flex-1 flex flex-col">
+      
+      
+      
+      
+      <!-- Content -->
+      <main class="p-4 md:ml-64 transition-all duration-300">
+        
+
+        
+        <!-- Header Estadistica Info --> 
+        
+        
+        <div>
+          <h2 class="text-2xl font-semibold">Resumen</h2>
+        </div>
+        <div class="flex items-center gap-4">
+          <!-- placeholder para notificaciones / avatar -->
+          <div class="relative">
+            <!-- <button class="rounded-full overflow-hidden w-10 h-10 border">
+              <img src="{{ request.user.profile.avatar_url|default:'#' }}" alt="avatar" class="object-cover w-full h-full" />
+            </button> -->
+          </div>
+        </div>
+        <!-- Métricas -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+          <div class="bg-white p-5 rounded shadow flex items-center">
+            <div class="flex-1">
+              <p class="text-sm text-gray-500">Pre-orders totales</p>
+              <!-- <p>Total de órdenes: {{ request.session.orders_count|default:0 }}</p> -->
+              <p class="text-2xl font-bold"><span id="orders-total-count">0</span> </p>
+              <!-- <p class="text-2xl font-bold">{{request.session.unique_business.orders}}</p> -->
+            </div>
+            <div>
+              <!-- icono -->
+              <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 7h18M3 12h18M3 17h18"/>
+              </svg>
+            </div>
+          </div>
+ 
+          <div class="bg-white p-5 rounded shadow flex items-center">
+            <div class="flex-1">
+              <p class="text-sm text-gray-500">ordenes Hoy</p>
+              <!-- <p>Total de órdenes: {{ request.session.orders_count|default:0 }}</p> -->
+              <p class="text-2xl font-bold"><span id="orders-today-count">0</span> </p>
+              <!-- <p class="text-2xl font-bold">{{request.session.unique_business.orders}}</p> -->
+            </div>
+            <div>
+              <!-- icono -->
+              <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 7h18M3 12h18M3 17h18"/>
+              </svg>
+            </div>
+          </div>
+          
+
+          <div class="bg-white p-5 rounded shadow flex items-center">
+            <div class="flex-1">
+              <p class="text-sm text-gray-500">Ordenes Canceladas</p>
+              <p class="text-2xl font-bold"> <span id="orders-cancelled-count">0</span> </p>
+            </div>
+            <div>
+              <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2M12 4v2m0 12v2"/>
+              </svg>
+            </div>
+          </div>
+
+
+          <div class="bg-white p-5 rounded shadow flex items-center">
+            <div class="flex-1">
+              <p class="text-sm text-gray-500">ordenes pendientes</p>
+              <p class="text-2xl font-bold"> <span id="orders-pending-count">0</span> </p>
+            </div>
+            <div>
+              <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M12 6a9 9 0 100 18 9 9 0 000-18z"/>
+                    </svg>
+                  </div>
+                </div>
+          
+          <div class="bg-white p-5 rounded shadow flex items-center">
+            <div class="flex-1">
+              <p class="text-sm text-gray-500">ordenes completadas</p>
+              <p class="text-2xl font-bold"> <span id="orders-completed-count">0</span> </p>
+            </div>
+            <div>
+              <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M12 6a9 9 0 100 18 9 9 0 000-18z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+          <div class="bg-white p-5 rounded shadow flex items-center">
+
+          </div>
+
+
+
+          <div class="bg-white p-5 rounded shadow flex items-center">
+            
+          </div>
+
+
+          <div class="bg-white p-5 rounded shadow flex items-center">
+ 
+          </div>
+          
+          <div class="bg-white p-5 rounded shadow flex items-center">
+           
+           
+          </div>
+
+
+        <!-- Tabla de pre-orders recientes -->
+        <!-- <div class="bg-white rounded shadow overflow-hidden">
+          <div class="px-6 py-4 border-b flex justify-between items-center">
+            <h3 class="text-lg font-semibold">Pre-orders recientes</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left table-auto">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-4 py-3 text-xs font-medium text-gray-500 uppercase">ID</th>
+                  <th class="px-4 py-3 text-xs font-medium text-gray-500 uppercase">Cliente</th>
+                  <th class="px-4 py-3 text-xs font-medium text-gray-500 uppercase">Producto</th>
+                  <th class="px-4 py-3 text-xs font-medium text-gray-500 uppercase">Cantidad</th>
+                  <th class="px-4 py-3 text-xs font-medium text-gray-500 uppercase">Estado</th>
+                  <th class="px-4 py-3 text-xs font-medium text-gray-500 uppercase">Total</th>
+                  <th class="px-4 py-3 text-xs font-medium text-gray-500 uppercase">Creado</th>
+                  <th class="px-4 py-3 text-xs font-medium text-gray-500 uppercase">Acción</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y">
+                {% for preorder in recent_preorders %}
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 text-sm">{{ preorder.id }}</td>
+                  <td class="px-4 py-3 text-sm">{{ preorder.cliente.username }}</td>
+                  <td class="px-4 py-3 text-sm">{{ preorder.producto.nombre }}</td>
+                  <td class="px-4 py-3 text-sm">{{ preorder.cantidad }}</td>
+                  <td class="px-4 py-3 text-sm">
+                    <span class="px-2 py-1 rounded text-xs
+                      {% if preorder.status == 'pending' %}bg-yellow-100 text-yellow-800{% elif preorder.status == 'paid' %}bg-green-100 text-green-800{% elif preorder.status == 'cancelled' %}bg-red-100 text-red-800{% else %}bg-gray-100 text-gray-800{% endif %}">
+                      {{ preorder.get_status_display }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-3 text-sm">S/{{ preorder.precio_total }}</td>
+                  <td class="px-4 py-3 text-sm">{{ preorder.creado_en|date:"SHORT_DATETIME_FORMAT" }}</td>
+                  <td class="px-4 py-3 text-sm">
+                    <a href="{% url 'dashboard-preorder-detail' preorder.id %}" class="text-blue-600 hover:underline">Ver</a>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="8" class="px-4 py-6 text-center text-gray-500">
+                    No hay pre-orders recientes.
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+
+
+
+
+
+            <div>
+              <h2 class="text-2xl font-semibold">Ordenes</h2>
+              <!-- <p>filtros</p> -->
+            </div>
+            <div class="flex items-center gap-4">
+              <!-- placeholder para notificaciones / avatar -->
+               <div class="relative">
+                <!-- <button class="rounded-full overflow-hidden w-10 h-10 border">
+                  <img src="{{ request.user.profile.avatar_url|default:'#' }}" alt="avatar" class="object-cover w-full h-full" />
+                </button> -->
+              </div>
+            </div>
+
+            
+            <div  class="space-y-5 p-4">
+              <div id="body-safe-peding-orders" class="space-y-4">
+              </div>
+
+            
+              <div id="body-peding-orders" class="space-y-4">
+                <h1 class="text-3xl font-bold relative inline-block mb-4">Hoy</h1>
+                <ul id="today-pending-orders-list" class="space-y-4"></ul>
+                 
+              </div>
+            </div>
+
+  <!-- Más órdenes aquí... -->
+      </div>
+
+      </main>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+<!--
+  Script 1 - metrics_peding
+-->
+
+
+
+<!--
+ScriptCards Peding Hoy
+-->
+
+
+<script>
+// const ContainerBodyListPeding = document.getElementById("body-peding-orders");
+
+// Insertamos título y UL
+// ContainerBodyListPeding.innerHTML = `
+//   <h1 class="text-3xl font-bold relative inline-block mb-4">Hoy</h1>
+//   <ul id="today-pending-orders-list" class="space-y-4"></ul>
+// `;
+    let eventSourceStatusCount = null;
+  function initStream() {
+     
+
+    
+    // SSE: escuchar cambios
+    const eventOrderStream = new EventSource(`http://127.0.0.1:8000/api/orders/stream/{{ unique_business.id }}/`)
+    
+    
+    eventOrderStream.onmessage = function(event) {
+      const data = JSON.parse(event.data);
+      console.log("script -  metricas funcionando ")
+      console.log(data)
+    
+    
+    
+    
+    
+    
+    
+      // Actualizar contadores si existen
+      const ordersTotalCountElem = document.getElementById("orders-total-count");
+      const ordersTodayCountElem = document.getElementById("orders-today-count");
+      const ordersPendingCountElem = document.getElementById("orders-pending-count");
+      const ordersCancelledCountElem = document.getElementById("orders-cancelled-count");
+      const ordersCompletedCountElem = document.getElementById("orders-completed-count");
+      const earnTodayElem = document.getElementById("earn-today");
+    
+    
+      if (ordersTotalCountElem) ordersTotalCountElem.textContent = data.status_summary.total;
+      if (ordersTodayCountElem) ordersTodayCountElem.textContent = data.status_summary.today;
+      if (ordersPendingCountElem) ordersPendingCountElem.textContent = data.status_summary.pending;
+      if (ordersCancelledCountElem) ordersCancelledCountElem.textContent = data.status_summary.cancelled;
+      if (ordersCompletedCountElem) ordersCompletedCountElem.textContent = data.status_summary.completed;
+      if (earnTodayElem) earnTodayElem.textContent = data.earn_today;
+    
+    };
+    
+    // Manejo de errores SSE
+    eventOrderStream.onerror = function(event) {
+      if (eventOrderStream.readyState === EventSource.CLOSED) {
+        console.error("Conexión SSE cerrada por el servidor.");
+      } else {
+        console.error("Error de conexión SSE:", event);
+      }
+    };
+    }
+
+
+
+    // Inicia el stream solo en esta página
+    initStream();
+
+    // ✅ Cuando cambias de página o cierras la pestaña
+    window.addEventListener("beforeunload", function() {
+        if (eventOrderStream) {
+            eventOrderStream.close();
+            console.log("🔌 Stream cerrado");
+        }
+    });
+
+
+</script>
+
+
+
+
+
+<!--
+  Script 2 - last_peding
+-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+      const csrfToken = "{{ csrf_token }}";
+    const nextUrl  = "{{ request.get_full_path }}"
+    eventSafePedingSource = null
+    
+
+
+
+    const infoPending ={}
+  const ContainerBodyListPedingSafe = document.getElementById("body-safe-peding-orders");
+
+
+  function initSafePendingStream() {
+      
+
+
+
+
+
+
+    
+    
+    // SSE
+    eventSafePedingSource = new EventSource(`http://127.0.0.1:8000/api/orders/stream_pending_safe/{{unique_business.id}}/`);
+ 
+    eventSafePedingSource.onopen = function () {
+      console.log("Conexión establecida con : order-pending-safe");
+    };
+    
+    
+    // Siempre insertamos el título + la UL vacía de inicio
+    ContainerBodyListPedingSafe.innerHTML = `
+      <h1 class="text-3xl font-bold relative inline-block mb-4">
+        Pendientes
+      </h1>
+      <ul id="safe-pending-orders-list" class="space-y-4"></ul>
+    `;
+    
+    const ContainerListPendingSafe = document.getElementById("safe-pending-orders-list");
+    
+    eventSafePedingSource.onmessage = function (event) {
+      ContainerListPendingSafe.innerHTML = "";
+    
+      const data = JSON.parse(event.data);
+      console.log("DATA:", data);
+    
+      // Vaciamos la lista siempre
+      ContainerListPendingSafe.innerHTML = "";
+    
+      // Si no hay data, dejamos solo el título y salimos
+      if (!data || data.length === 0) {
+        return;
+      }
+    
+      // Si hay data, generamos las tarjetas
+      data.forEach(order => {
+        const card = document.createElement("div");
+        card.className = "bg-white shadow rounded-lg p-4 border";
+        card.innerHTML = `
+          <h3 class="font-bold text-lg">Pre-order #${order.id}</h3>
+          <div class="mt-2">
+            <p><span class="font-semibold">Cliente:</span></p>
+            <div class="ml-4 mt-1">
+              <p>- ${order.data.first_name}</p>
+              <p>- ${order.data.email}</p>
+              <p>- ${order.data.phone}</p>
+            </div>
+            
+            <p class="mt-2"><span class="font-semibold">Carrito:</span></p>
+            <div class="ml-4 mt-1">
+              ${order.carts.items.map(item => `
+                <p>- ${item.name} (x${item.quantity}) - S/.${item.price}</p>
+
+                ${item.description && item.description.trim() !== "" 
+                        ? `<h1>- ${description}</h1>` 
+                        : `<h1>"no existe"</h1>` }
+              `).join("")}
+            </div>
+    
+            <p class="mt-2"><span class="font-semibold">Estado:</span> ${order.status}</p>
+            <p><span class="font-semibold">Total:</span> S/.${order.total_amount}</p>
+            <p><span class="font-semibold">Creado:</span> ${new Date(order.date).toLocaleString()}</p>
+          
+    
+    
+    
+                  <div class="mt-4 flex gap-2">
+                      <button id="validatedBtn" 
+                        class="w-full bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg" 
+                        data-order='${JSON.stringify(order)}'> Validar Orden </button>
+        
+                        <button id="cancelledBtn"
+                          type="button" 
+                          id="cancelledBtn"
+                          data-order='${JSON.stringify(order)}'> Orden pagada </button>
+
+                          class="cancel-btn w-full bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg">
+                          Cancelar Orden
+                        </button>
+    
+                   
+                        </div>
+                        </div>
+                        `;
+                        ContainerListPendingSafe.appendChild(card);
+                      });
+                    };
+    }
+
+
+
+
+    // const ContainerListPendingSafe = document.getElementById("safe-pending-orders-list");
+
+
+
+
+
+
+
+
+
+
+    // ✅ Cuando cambias de página o cierras la pestaña
+    window.addEventListener("beforeunload", function() {
+        if (eventSafePedingSource) {
+            eventSafePedingSource.close();
+            console.log("🔌 Stream cerrado");
+        }
+    });
+
+
+                
+                
+                
+                
+              </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+Script 3 - today_peding
+-->
+
+
+
+
+
+
+
+
+
+<Script>
+  
+    let EventSourceTodayOrders = null;
+
+
+
+  function initEventSourceTodayOrdersStream() {
+        
+
+
+
+
+
+
+
+    
+    
+    
+      
+      // Función para generar HTML de tarjeta
+      function generateCardHTML(order) {
+        return `
+        <h3 class="font-bold text-lg">Pre-order #${order.id}</h3>
+        <div class="mt-2">
+          <p><span class="font-semibold">Cliente:</span>
+            <div class="ml-4 mt-1">
+              <p>- ${order.data.first_name}</p>
+              <p>- ${order.data.email}</p>
+              <p>- ${order.data.phone}</p>
+              </div>
+          </p>
+          <p><span class="font-semibold">Carrito:</span>
+            <div class="ml-4 mt-1">
+              ${order.carts.items.map(item => `
+              <p>- ${item.name} (x${item.quantity}) -  S/.${item.price}</p>
+
+            ${item.description && item.description.trim() !== "" 
+              ? `<p class="ml-6 text-sm text-gray-500">↳ ${item.description}</p>` 
+              : ""}
+              `).join("")}
+            </div>
+            
+            <div>
+            <p><span class="font-semibold">Estado:</span> ${order.status}</p>
+            <p><span class="font-semibold">Total:</span> S/.${order.total_amount}</p>
+            <p><span class="font-semibold">Creado:</span> ${new Date(order.date).toLocaleString()}</p>
+            
+            </div>
+            <div class="mt-4 flex gap-2">
+              <button id="validatedBtn" 
+              class="w-full bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg" 
+              data-order='${JSON.stringify(order)}'> Validar Orden </button>
+          
+              <button id="cancelledBtn" 
+              class = "cancel-btn w-full bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg"
+              data-order='${JSON.stringify(order)}'> Cancelar Orden
+              </button>
+              
+              
+
+            </div>  
+
+            </div>  
+                      `;  
+                    }  
+                    
+                    
+                    // const ordersCompletedCountElem = document.getElementById("orders-completed-count");
+                    
+ 
+        const ContainerTodayOrder = document.getElementById("today-pending-orders-list");
+        // SSE: escuchar cambios
+         EventSourceTodayOrders = new EventSource(`http://127.0.0.1:8000/api/orders/stream_pending_today/{{unique_business.id}}/`);
+        EventSourceTodayOrders.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        ContainerTodayOrder.innerHTML = "";
+        
+        console.log("orden-pedgin-today")
+        console.log("ejecutando")
+        console.log(data)
+        console.log(data.today_orders)
+    
+        data.today_orders.forEach(order => {
+        console.log(order)  
+    
+        const card = document.createElement("div");
+        card.dataset.orderId = order.id; // para identificar la tarjeta
+        card.innerHTML = generateCardHTML(order);
+        ContainerTodayOrder.appendChild(card);
+        });
+    
+    };  
+
+    }
+
+
+
+
+    initEventSourceTodayOrdersStream()
+
+    // Inicia el stream solo en esta página
+
+    // ✅ Cuando cambias de página o cierras la pestaña
+    window.addEventListener("beforeunload", function() {
+        if (EventSourceTodayOrders) {
+            EventSourceTodayOrders.close();
+            console.log("🔌 Stream cerrado");
+        }
+    });
+</Script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+Script 4 - validated_peding
+-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function sendValidatedOrder(order, nextUrl) {
+    // const ContainerTodayOrder = document.getElementById("today-pending-orders-list");
+
+    // const ContainerListPendingSafe = document.getElementById("safe-pending-orders-list");
+    
+    const validatedPaymentURL = 'http://127.0.0.1:8000/api/validated/'
+    // delegación de eventos
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  
+      const payload = {
+          next: nextUrl,
+          order: order
+      };
+  
+      // Usamos FormData en vez de JSON
+      const formData = new FormData();
+      formData.append("order", JSON.stringify(order));
+      formData.append("next", nextUrl);
+  
+      fetch(validatedPaymentURL, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": csrfToken  // 👈 importante, no poner Content-Type aquí
+        },
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log("✅ Respuesta del servidor:", data);
+        })
+        .catch(error => {
+          console.error("❌ Error en fetch:", error);
+        });
+  }
+  // función reutilizable
+  document.addEventListener("click", function (event) {
+    if (event.target && event.target.id === "validatedBtn"){
+
+      const order = JSON.parse(event.target.dataset.order);
+      console.log(event.target.dataset)
+
+      sendValidatedOrder(order,nextUrl);
+    }
+  })
+
+  // document.addEventListener("click", function (event) {
+  //     if (event.target && event.target.id === "validatedBtn") {
+  //       // Recuperar la orden del atributo data-order
+  //       const order = JSON.parse(event.target.dataset.order);
+  //       console.log(event.target.dataset)  
+  //       // Llamar a la función con la orden específica
+  //       sendValidatedOrder(order, nextUrl);
+  //     }
+
+  //   });
+</script>
+
+<!--
+Script 5 - cancelled
+-->
+
+
+<script>
+  function sendCancelledOrder(order, nextUrl, reason) {
+    
+    const CancelledPaymentURL = 'http://127.0.0.1:8000/api/cancelled/'
+
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    const formData = new FormData();
+    formData.append("order", JSON.stringify(order));
+    formData.append("reason", reason);
+    formData.append("next", nextUrl);
+
+    fetch(CancelledPaymentURL, {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": csrfToken
+      },
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log("✅ Respuesta del servidor:", data);
+      })
+      .catch(error => {
+        console.error("❌ Error en fetch:", error);
+      });
+  }
+
+  // función reutilizable
+  function handleCancelClick(event) {
+    if (event.target && event.target.id === "cancelledBtn") {
+      const order = JSON.parse(event.target.dataset.order);
+
+      // Mostrar prompt para ingresar razón
+      const reason = prompt("Ingrese la razón de cancelación:");
+
+      console.log(reason)
+
+      if (reason && reason.trim() !== "") {
+        sendCancelledOrder(order, nextUrl, reason.trim());
+      } else {
+        alert("Debe ingresar una razón para cancelar la orden.");
+      }
+    }
+  }
+
+  document.addEventListener("click", handleCancelClick);
+  // document.addEventListener("click", handleCancelClick);
+</script>
