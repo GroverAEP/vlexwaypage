@@ -4,21 +4,21 @@ echo "========================================"
 echo " INICIANDO SERVIDOR DJANGO CON GUNICORN"
 echo "========================================"
 
-# Crear entorno virtual si no existe
-if [ ! -d "venv" ]; then
-  echo "[+] Creando entorno virtual..."
-  python3 -m venv venv
-fi
+# Render ya maneja el entorno virtual (.venv), no lo creamos manualmente
 
-# Activar entorno virtual
-echo "[+] Activando entorno virtual..."
-source venv/bin/activate
-
-# Instalar dependencias
+# Actualizar pip e instalar dependencias
 echo "[+] Instalando requerimientos..."
 pip install --upgrade pip
 pip install -r requirements.txt
 
 # Aplicar migraciones
 echo "[+] Ejecutando migraciones..."
-python manage.py migrate
+python manage.py migrate --noinput
+
+# Recolectar archivos estáticos
+echo "[+] Recolectando archivos estáticos..."
+python manage.py collectstatic --noinput
+
+# Iniciar servidor con Gunicorn
+echo "[+] Iniciando Gunicorn..."
+gunicorn frBot.wsgi:application --bind 0.0.0.0:$PORT
