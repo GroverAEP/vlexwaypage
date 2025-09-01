@@ -18,7 +18,3 @@ python manage.py migrate --noinput
 # Recolectar archivos estáticos
 echo "[+] Recolectando archivos estáticos..."
 python manage.py collectstatic --noinput
-
-# Iniciar servidor con Gunicorn
-echo "[+] Iniciando Gunicorn..."
-gunicorn frBot.wsgi:application --bind 0.0.0.0:$PORT
