@@ -23,10 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-khx-9t1(irj^#l1%j_z4(+0x7rq4aa82m0%1^g@#z2m7u*%cqb'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "vlexwaypage.onrender.com", 
+    "localhost", 
+    "127.0.0.1"
+]
 
 
 # Application definition
@@ -131,3 +133,23 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+# ==========================
+# 🔹 DEBUG
+# ==========================
+DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1")
+
+# ==========================
+# 🔹 ALLOWED_HOSTS
+# ==========================
+if DEBUG:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+else:
+    # Render recomienda usar este valor porque tu dominio cambia con el servicio
+    RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+    if RENDER_EXTERNAL_HOSTNAME:
+        ALLOWED_HOSTS = [RENDER_EXTERNAL_HOSTNAME, "vlexwaypage.onrender.com"]
+    else:
+        ALLOWED_HOSTS = ["vlexwaypage.onrender.com"]
