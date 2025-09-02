@@ -122,25 +122,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
 
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-
-# Opcional: para compresión y caché
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
+# Detectar si estamos en Render
+IS_RENDER = os.getenv("RENDER", False)
 
 # ==========================
 # 🔹 DEBUG
 # ==========================
-DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1")
-
+if IS_RENDER:
+    DEBUG = False   # Producción en Render
+else:
+    DEBUG = True    # Local
 # ==========================
 # 🔹 ALLOWED_HOSTS
 # ==========================
@@ -153,3 +145,19 @@ else:
         ALLOWED_HOSTS = [RENDER_EXTERNAL_HOSTNAME, "vlexwaypage.onrender.com"]
     else:
         ALLOWED_HOSTS = ["vlexwaypage.onrender.com"]
+# Archivos estáticos
+STATIC_URL = "/static/"
+
+# Carpeta donde collectstatic pondrá todos los archivos para producción (ej: Render)
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Carpeta(s) de archivos estáticos adicionales en desarrollo
+STATICFILES_DIRS = [
+    BASE_DIR / "static",  # solo si tienes una carpeta global /static además de los de apps
+]
+
+# WhiteNoise para servir estáticos comprimidos y con caché en producción
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Clave primaria por defecto
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

@@ -186,25 +186,28 @@ def optionLogout(request):
 
 
 def accountBusinessDashboard(request):
-    if request.method != "POST":
+    if request.method not in ["POST", "GET"]:
         return JsonResponse({
-            "error": "metodo no permitido",
-        })
-        
-    business_id = request.POST.get("business_id")
-    getBusinessId= GetBusinessId(business_id=business_id)
-    response = getBusinessId.getResponse()
+            "error": "Método no permitido",
+        }, status=405)
+     
+    if request.method =="POST":    
+        business_id = request.POST.get("business_id")
+        getBusinessId= GetBusinessId(business_id=business_id)
+        response = getBusinessId.getResponse()
+
+        getBusinessId.setSession(request=request)
+
+        if response is None:
+            return JsonResponse({"response":response})
+
+        print(response)
+        if response.get("status") == 404:    
+            return redirect("account-business")
+        return render(request, f"{route_business}dashboard.html")
     
-    getBusinessId.setSession(request=request)
-    
-    if response is None:
-        return JsonResponse({"response":response})
-    
-    print(response)
-    if response.get("status") == 404:    
-        return redirect("account-business")
-    return render(request, f"{route_business}dashboard.html")
-    
+    if request.method == "GET":
+        return render(request, f"{route_business}dashboard.html")
     
     # return JsonResponse({"ERROR":"metodo invalido" + request.method})
     

@@ -1,3 +1,6 @@
+{% load static %}   <!-- Esto habilita la etiqueta "static" -->
+
+
 <!-- {# templates/dashboard_base.html #}
 <!DOCTYPE html>
 <html lang="es">
@@ -79,7 +82,7 @@
         <!-- 📊 Gráfico -->
         <div class="chart-container w-full h-96 mb-6">
             <!-- <div class="" > -->
-                <canvas id="earnChartTable"></canvas>
+                <canvas id="earnMonthChart"></canvas>
 
             <!-- </div> -->
             <!-- <div>
@@ -139,177 +142,14 @@
     <!--     gRAFICA DE GANANCIAS POR MES     -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-
-
-    </main>
-
-
-
-
-
-<script>
-
-// Script para obtener las ganancias generadas en el mes
-const earn_chart_month = document.getElementById('earnChartTable');
-const ctAx = earn_chart_month.getContext('2d');
-
-let eventEarnMonth = null;
-
-const list_week = [
-    "Enero", "Febrero", "Marzo", "Abril",
-    "Mayo", "Junio", "Julio", "Agosto",
-    "Septiembre", "Octubre", "Noviembre", "Diciembre"
-];
-
-function initialEventEarnMonth() {
-        eventEarnMonth = new EventSource(`http://127.0.0.1:8000/api/orders/metrics/stream_earn_month/{{ unique_business.id }}/`
-    );
-    eventEarnMonth.onmessage = function(event) {
-        const data = JSON.parse(event.data); // { "01": 0, "02": 0, ..., "08": 52, ... }
-        const earn_month = Object.values(data); // [0,0,0,0,0,32,20,52,0,0,0,0]
-        
-        console.log("📊 Datos recibidos:", data);
-        console.log(earn_month)
-        new Chart(ctAx, {
-            type: 'bar',
-            data: {
-                labels: list_week,
-                datasets: [{
-                    label: 'Ganancia (USD)',
-                    data: earn_month,
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    };
-}
-
-initialEventEarnMonth();
-
-// ✅ Cuando cambias de página o cierras la pestaña
-window.addEventListener("beforeunload", function() {
-    if (eventEarnMonth) {
-        eventEarnMonth.close();
-        console.log("🔌 Stream cerrado");
-    }
-});
-
-
-
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- JS Toggle -->
-<script>
-    const sidebar = document.getElementById('sidebar');
-    const menuBtn = document.getElementById('menuBtn');
-    const closeSidebarItems = document.querySelectorAll('.close-sidebar');
-    const closeMenuOnClick = document.getElementById('closeMenuOnClick');
     
-    // Abrir/cerrar menú en celulares
-        menuBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('-translate-x-full');
-        });
-        
-        // Cerrar menú al hacer click en un enlace del sidebar
-        closeSidebarItems.forEach(item => {
-            item.addEventListener('click', () => {
-                if (window.innerWidth < 768) {
-                    sidebar.classList.add('-translate-x-full');
-                }
-            });
-        });
-        
-        // Cerrar menú al dar clic en el título
-        closeMenuOnClick.addEventListener('click', () => {
-            if (window.innerWidth < 768) {
-                sidebar.classList.add('-translate-x-full');
-            }
-        });
-    </script>
-
-
-
-<script>
-    function updateCustomers() {
-        
-        
-    }
-</script>
-
-<script>
-    function updateEarnList(){
-        
-    }
-</script>
-
-<script>
-    // const businessId = "{{request.session.unique_business.id}}";  // Ejemplo: podría ser {{ user.id }}, localStorage, etc.
-    // const businessId = document.getElementById("orders-container").dataset.businessId;
-   const eventOrderStream = new EventSource(`http://127.0.0.1:8000/api/orders/stream/{{ unique_business.id }}/`)
-    
-    eventOrderStream.onmessage = function(event) {
-        const data = JSON.parse(event.data);
-        const ordersCountElem = document.getElementById("orders-count");
-        const earnTodayElem =  document.getElementById("earn-today");
-        
-        console.log(data.earn_today)
-
-        console.log(data)
-        if (ordersCountElem) {
-            earnTodayElem.textContent = data.earn_today;
-            ordersCountElem.textContent = data.status_summary.total;
-        }
-    };
-    
-    
-    // eventSource.onmessage = function(event) {
-        //     const data = JSON.parse(event.data);
-        //     console.log("Órdenes actualizadas:", data);
-        //     document.getElementById("orders-container").innerText = JSON.stringify(data, null, 2);
-        // };
-        
-        eventOrderStream.onerror = function() {
-            console.error("Error en la conexión SSE");
-        };
+</main>
+        <!-- Datos del negocio en JSON -->
+        <script id="business-context" type="application/json">
+        { "id": "{{ unique_business.id|escapejs }}" }
         </script>
+     <script type="module" src="{% static 'frontend/js/analytics_dashboard.js' %}"></script>
 
 </body>
+
 </html>
-
-
-
-<script>
-    
-    function updaerBusinessDashboard(params) {
-        
-        
-    }
-
-</script>
